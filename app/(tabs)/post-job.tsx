@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,9 +7,11 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
+  Platform,
+} from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { LinearGradient } from "expo-linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Plus,
   MapPin,
@@ -21,7 +23,7 @@ import {
   Save,
   Send,
   Image as ImageIcon,
-} from 'lucide-react-native';
+} from "lucide-react-native";
 
 interface CastingForm {
   title: string;
@@ -31,45 +33,77 @@ interface CastingForm {
   requirements: string;
   location: string;
   budget: string;
-  deadline: string;
+  deadline: Date | null;
   contactEmail: string;
   ageRange: string;
   gender: string;
   experience: string;
 }
 
-const projectTypes = ['Feature Film', 'Web Series', 'Short Film', 'Commercial', 'Theater', 'Documentary'];
-const genderOptions = ['Male', 'Female', 'Any', 'Non-Binary'];
-const experienceOptions = ['Fresher', '1-3 years', '3-5 years', '5+ years', 'Any'];
+const projectTypes = [
+  "Feature Film",
+  "Web Series",
+  "Short Film",
+  "Commercial",
+  "Theater",
+  "Documentary",
+];
+const genderOptions = ["Male", "Female", "Any", "Non-Binary"];
+const experienceOptions = [
+  "Fresher",
+  "1-3 years",
+  "3-5 years",
+  "5+ years",
+  "Any",
+];
 
 export default function PostJobScreen() {
   const [formData, setFormData] = useState<CastingForm>({
-    title: '',
-    projectName: '',
-    type: 'Feature Film',
-    description: '',
-    requirements: '',
-    location: '',
-    budget: '',
-    deadline: '',
-    contactEmail: '',
-    ageRange: '',
-    gender: 'Any',
-    experience: 'Any',
+    title: "",
+    projectName: "",
+    type: "Feature Film",
+    description: "",
+    requirements: "",
+    location: "",
+    budget: "",
+    deadline: null,
+    contactEmail: "",
+    ageRange: "",
+    gender: "Any",
+    experience: "Any",
   });
   const [loading, setLoading] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const updateFormData = (field: keyof CastingForm, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const updateFormData = (
+    field: keyof CastingForm,
+    value: string | Date | null,
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleDateChange = (event: any, selectedDate?: Date) => {
+    const currentDate = selectedDate || formData.deadline;
+    setShowDatePicker(Platform.OS === "ios");
+    updateFormData("deadline", currentDate);
+  };
+
+  const formatDate = (date: Date | null) => {
+    if (!date) return "";
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
   };
 
   const handleSaveDraft = () => {
-    Alert.alert('Draft Saved', 'Your casting call has been saved as a draft');
+    Alert.alert("Draft Saved", "Your casting call has been saved as a draft");
   };
 
   const handlePublish = async () => {
     if (!formData.title || !formData.projectName || !formData.description) {
-      Alert.alert('Error', 'Please fill in all required fields');
+      Alert.alert("Error", "Please fill in all required fields");
       return;
     }
 
@@ -77,24 +111,27 @@ export default function PostJobScreen() {
     // Simulate API call
     setTimeout(() => {
       setLoading(false);
-      Alert.alert('Success', 'Casting call published successfully!', [
-        { text: 'OK', onPress: () => {
-          // Reset form
-          setFormData({
-            title: '',
-            projectName: '',
-            type: 'Feature Film',
-            description: '',
-            requirements: '',
-            location: '',
-            budget: '',
-            deadline: '',
-            contactEmail: '',
-            ageRange: '',
-            gender: 'Any',
-            experience: 'Any',
-          });
-        }}
+      Alert.alert("Success", "Casting call published successfully!", [
+        {
+          text: "OK",
+          onPress: () => {
+            // Reset form
+            setFormData({
+              title: "",
+              projectName: "",
+              type: "Feature Film",
+              description: "",
+              requirements: "",
+              location: "",
+              budget: "",
+              deadline: null,
+              contactEmail: "",
+              ageRange: "",
+              gender: "Any",
+              experience: "Any",
+            });
+          },
+        },
       ]);
     }, 1500);
   };
@@ -104,7 +141,7 @@ export default function PostJobScreen() {
     value: string,
     options: string[],
     onSelect: (value: string) => void,
-    icon: React.ReactNode
+    icon: React.ReactNode,
   ) => (
     <View style={styles.inputContainer}>
       <Text style={styles.inputLabel}>{label}</Text>
@@ -120,14 +157,16 @@ export default function PostJobScreen() {
               key={option}
               style={[
                 styles.optionChip,
-                value === option && styles.selectedOption
+                value === option && styles.selectedOption,
               ]}
               onPress={() => onSelect(option)}
             >
-              <Text style={[
-                styles.optionText,
-                value === option && styles.selectedOptionText
-              ]}>
+              <Text
+                style={[
+                  styles.optionText,
+                  value === option && styles.selectedOptionText,
+                ]}
+              >
                 {option}
               </Text>
             </TouchableOpacity>
@@ -138,13 +177,15 @@ export default function PostJobScreen() {
   );
 
   return (
-    <LinearGradient colors={['#000000', '#1a1a1a']} style={styles.container}>
+    <LinearGradient colors={["#000000", "#1a1a1a"]} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>Post Casting Call</Text>
-            <Text style={styles.headerSubtitle}>Find the perfect talent for your project</Text>
+            <Text style={styles.headerSubtitle}>
+              Find the perfect talent for your project
+            </Text>
           </View>
           <TouchableOpacity style={styles.addMediaButton}>
             <ImageIcon color="#FFD700" size={20} />
@@ -159,7 +200,7 @@ export default function PostJobScreen() {
           {/* Basic Information */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Basic Information</Text>
-            
+
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Role Title *</Text>
               <View style={styles.inputWrapper}>
@@ -169,7 +210,7 @@ export default function PostJobScreen() {
                   placeholder="e.g., Lead Actor, Supporting Actress"
                   placeholderTextColor="#666666"
                   value={formData.title}
-                  onChangeText={(value) => updateFormData('title', value)}
+                  onChangeText={(value) => updateFormData("title", value)}
                 />
               </View>
             </View>
@@ -183,24 +224,24 @@ export default function PostJobScreen() {
                   placeholder="e.g., Echoes of Tomorrow"
                   placeholderTextColor="#666666"
                   value={formData.projectName}
-                  onChangeText={(value) => updateFormData('projectName', value)}
+                  onChangeText={(value) => updateFormData("projectName", value)}
                 />
               </View>
             </View>
 
             {renderDropdown(
-              'Project Type',
+              "Project Type",
               formData.type,
               projectTypes,
-              (value) => updateFormData('type', value),
-              <Film color="#C0C0C0" size={20} />
+              (value) => updateFormData("type", value),
+              <Film color="#C0C0C0" size={20} />,
             )}
           </View>
 
           {/* Project Details */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Project Details</Text>
-            
+
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Description *</Text>
               <View style={[styles.inputWrapper, styles.textAreaWrapper]}>
@@ -209,7 +250,7 @@ export default function PostJobScreen() {
                   placeholder="Describe the role, project, and what you're looking for..."
                   placeholderTextColor="#666666"
                   value={formData.description}
-                  onChangeText={(value) => updateFormData('description', value)}
+                  onChangeText={(value) => updateFormData("description", value)}
                   multiline
                   numberOfLines={4}
                 />
@@ -224,7 +265,9 @@ export default function PostJobScreen() {
                   placeholder="Age range, experience level, special skills, etc."
                   placeholderTextColor="#666666"
                   value={formData.requirements}
-                  onChangeText={(value) => updateFormData('requirements', value)}
+                  onChangeText={(value) =>
+                    updateFormData("requirements", value)
+                  }
                   multiline
                   numberOfLines={3}
                 />
@@ -235,7 +278,7 @@ export default function PostJobScreen() {
           {/* Casting Criteria */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Casting Criteria</Text>
-            
+
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Age Range</Text>
               <View style={styles.inputWrapper}>
@@ -245,32 +288,32 @@ export default function PostJobScreen() {
                   placeholder="e.g., 25-35 years"
                   placeholderTextColor="#666666"
                   value={formData.ageRange}
-                  onChangeText={(value) => updateFormData('ageRange', value)}
+                  onChangeText={(value) => updateFormData("ageRange", value)}
                 />
               </View>
             </View>
 
             {renderDropdown(
-              'Gender',
+              "Gender",
               formData.gender,
               genderOptions,
-              (value) => updateFormData('gender', value),
-              <Users color="#C0C0C0" size={20} />
+              (value) => updateFormData("gender", value),
+              <Users color="#C0C0C0" size={20} />,
             )}
 
             {renderDropdown(
-              'Experience Level',
+              "Experience Level",
               formData.experience,
               experienceOptions,
-              (value) => updateFormData('experience', value),
-              <Clock color="#C0C0C0" size={20} />
+              (value) => updateFormData("experience", value),
+              <Clock color="#C0C0C0" size={20} />,
             )}
           </View>
 
           {/* Logistics */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Logistics</Text>
-            
+
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Location</Text>
               <View style={styles.inputWrapper}>
@@ -280,7 +323,7 @@ export default function PostJobScreen() {
                   placeholder="e.g., Mumbai, India"
                   placeholderTextColor="#666666"
                   value={formData.location}
-                  onChangeText={(value) => updateFormData('location', value)}
+                  onChangeText={(value) => updateFormData("location", value)}
                 />
               </View>
             </View>
@@ -294,23 +337,39 @@ export default function PostJobScreen() {
                   placeholder="e.g., ₹50,000 - ₹1,00,000"
                   placeholderTextColor="#666666"
                   value={formData.budget}
-                  onChangeText={(value) => updateFormData('budget', value)}
+                  onChangeText={(value) => updateFormData("budget", value)}
                 />
               </View>
             </View>
 
+            {/* Date Picker for Deadline */}
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Application Deadline</Text>
-              <View style={styles.inputWrapper}>
+              <TouchableOpacity
+                style={styles.inputWrapper}
+                onPress={() => setShowDatePicker(true)}
+              >
                 <Calendar color="#C0C0C0" size={20} />
-                <TextInput
-                  style={styles.input}
-                  placeholder="e.g., 2024-02-15"
-                  placeholderTextColor="#666666"
-                  value={formData.deadline}
-                  onChangeText={(value) => updateFormData('deadline', value)}
+                <Text
+                  style={[
+                    styles.input,
+                    { color: formData.deadline ? "#FFFFFF" : "#666666" },
+                  ]}
+                >
+                  {formatDate(formData.deadline) || "Select deadline date"}
+                </Text>
+              </TouchableOpacity>
+              {showDatePicker && (
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={formData.deadline || new Date()}
+                  mode="date"
+                  is24Hour={true}
+                  display="default"
+                  onChange={handleDateChange}
+                  minimumDate={new Date()}
                 />
-              </View>
+              )}
             </View>
 
             <View style={styles.inputContainer}>
@@ -322,7 +381,9 @@ export default function PostJobScreen() {
                   placeholder="casting@yourcompany.com"
                   placeholderTextColor="#666666"
                   value={formData.contactEmail}
-                  onChangeText={(value) => updateFormData('contactEmail', value)}
+                  onChangeText={(value) =>
+                    updateFormData("contactEmail", value)
+                  }
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
@@ -335,8 +396,9 @@ export default function PostJobScreen() {
             <TouchableOpacity
               style={styles.draftButton}
               onPress={handleSaveDraft}
+              activeOpacity={0.8}
             >
-              <Save color="#C0C0C0" size={20} />
+              <Save color="#C0C0C0" size={18} />
               <Text style={styles.draftButtonText}>Save Draft</Text>
             </TouchableOpacity>
 
@@ -344,14 +406,22 @@ export default function PostJobScreen() {
               style={styles.publishButton}
               onPress={handlePublish}
               disabled={loading}
+              activeOpacity={0.8}
             >
               <LinearGradient
-                colors={['#FFD700', '#FFA500']}
+                colors={
+                  loading ? ["#666666", "#444444"] : ["#FFD700", "#FFA500"]
+                }
                 style={styles.gradientButton}
               >
-                <Send color="#000000" size={20} />
-                <Text style={styles.publishButtonText}>
-                  {loading ? 'Publishing...' : 'Publish Casting'}
+                <Send color={loading ? "#999999" : "#000000"} size={18} />
+                <Text
+                  style={[
+                    styles.publishButtonText,
+                    { color: loading ? "#999999" : "#000000" },
+                  ]}
+                >
+                  {loading ? "Publishing..." : "Publish Casting"}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -370,9 +440,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 20,
@@ -382,39 +452,39 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 24,
-    fontFamily: 'Playfair-Bold',
-    color: '#FFFFFF',
+    fontFamily: "Playfair-Bold",
+    color: "#FFFFFF",
     marginBottom: 4,
   },
   headerSubtitle: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: '#C0C0C0',
+    fontFamily: "Inter-Regular",
+    color: "#C0C0C0",
   },
   addMediaButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 215, 0, 0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255, 215, 0, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: 'rgba(255, 215, 0, 0.3)',
+    borderColor: "rgba(255, 215, 0, 0.3)",
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingBottom: 100,
+    paddingBottom: 40,
   },
   section: {
     marginBottom: 32,
   },
   sectionTitle: {
     fontSize: 18,
-    fontFamily: 'Inter-Bold',
-    color: '#FFFFFF',
+    fontFamily: "Inter-Bold",
+    color: "#FFFFFF",
     marginBottom: 16,
   },
   inputContainer: {
@@ -422,43 +492,43 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: '#FFFFFF',
+    fontFamily: "Inter-Medium",
+    color: "#FFFFFF",
     marginBottom: 8,
   },
   inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: "rgba(255, 255, 255, 0.1)",
     paddingHorizontal: 16,
     minHeight: 56,
   },
   textAreaWrapper: {
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     paddingVertical: 16,
   },
   input: {
     flex: 1,
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: '#FFFFFF',
+    fontFamily: "Inter-Regular",
+    color: "#FFFFFF",
     marginLeft: 12,
   },
   textArea: {
     marginLeft: 0,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
     minHeight: 80,
   },
   dropdownContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: "rgba(255, 255, 255, 0.1)",
     paddingLeft: 16,
     minHeight: 56,
   },
@@ -467,65 +537,71 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   optionChip: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 6,
     marginLeft: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: "rgba(255, 255, 255, 0.2)",
   },
   selectedOption: {
-    backgroundColor: 'rgba(255, 215, 0, 0.2)',
-    borderColor: '#FFD700',
+    backgroundColor: "rgba(255, 215, 0, 0.2)",
+    borderColor: "#FFD700",
   },
   optionText: {
     fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: '#C0C0C0',
+    fontFamily: "Inter-Medium",
+    color: "#C0C0C0",
   },
   selectedOptionText: {
-    color: '#FFD700',
+    color: "#FFD700",
   },
   actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "center",
   },
   draftButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 28,
-    paddingVertical: 16,
-    marginRight: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: "rgba(255, 255, 255, 0.2)",
+    minHeight: 48,
   },
   draftButtonText: {
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
-    color: '#C0C0C0',
-    marginLeft: 8,
+    fontSize: 14,
+    fontFamily: "Inter-SemiBold",
+    color: "#E0E0E0",
+    marginLeft: 6,
+    textAlign: "center",
   },
   publishButton: {
     flex: 2,
-    borderRadius: 28,
-    overflow: 'hidden',
-    marginLeft: 8,
+    borderRadius: 14,
+    overflow: "hidden",
+    minHeight: 48,
   },
   gradientButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    minHeight: 48,
   },
   publishButtonText: {
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
-    color: '#000000',
-    marginLeft: 8,
+    fontSize: 15,
+    fontFamily: "Inter-Bold",
+    color: "#000000",
+    marginLeft: 6,
+    textAlign: "center",
   },
 });
+
