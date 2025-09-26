@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,24 +9,24 @@ import {
   Platform,
   ScrollView,
   Alert,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Eye, EyeOff, Mail, Lock } from 'lucide-react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import { BACKEND_URL } from '../(tabs)/profile';
+} from "react-native";
+import { useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import { ArrowLeft, Eye, EyeOff, Mail, Lock } from "lucide-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { BACKEND_URL } from "../(tabs)/profile";
 
 export default function LoginScreen() {
   const router = useRouter();
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     if (!phoneNumber || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
@@ -40,7 +40,7 @@ export default function LoginScreen() {
       if (!token) {
         Alert.alert(
           "Error",
-          "Failed to create account. Please try again later."
+          "Failed to create account. Please try again later.",
         );
         return;
       }
@@ -50,7 +50,7 @@ export default function LoginScreen() {
       console.error("Registration error:", error);
       Alert.alert(
         "Error",
-        "An error occurred while creating your account. Please try again later"
+        "An error occurred while creating your account. Please try again later",
       );
       setLoading(false);
     } finally {
@@ -59,19 +59,22 @@ export default function LoginScreen() {
   };
 
   const handleSocialLogin = (provider: string) => {
-    Alert.alert('Social Login', `${provider} login integration would be implemented here`);
+    Alert.alert(
+      "Social Login",
+      `${provider} login integration would be implemented here`,
+    );
   };
 
   return (
-    <LinearGradient
-      colors={['#000000', '#1a1a1a']}
-      style={styles.container}
-    >
+    <LinearGradient colors={["#000000", "#1a1a1a"]} style={styles.container}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity
@@ -81,7 +84,9 @@ export default function LoginScreen() {
               <ArrowLeft color="#FFFFFF" size={24} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Welcome Back</Text>
-            <Text style={styles.headerSubtitle}>Sign in to continue your journey</Text>
+            <Text style={styles.headerSubtitle}>
+              Sign in to continue your journey
+            </Text>
           </View>
 
           {/* Form */}
@@ -127,7 +132,7 @@ export default function LoginScreen() {
 
             <TouchableOpacity
               style={styles.forgotPassword}
-              onPress={() => router.push('/(auth)/forgot-password')}
+              onPress={() => router.push("/(auth)/forgot-password")}
             >
               <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
@@ -138,11 +143,11 @@ export default function LoginScreen() {
               disabled={loading}
             >
               <LinearGradient
-                colors={['#FFD700', '#FFA500']}
+                colors={["#FFD700", "#FFA500"]}
                 style={styles.gradientButton}
               >
                 <Text style={styles.loginButtonText}>
-                  {loading ? 'Signing In...' : 'Sign In'}
+                  {loading ? "Signing In..." : "Sign In"}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -159,13 +164,13 @@ export default function LoginScreen() {
             <View style={styles.socialButtons}>
               <TouchableOpacity
                 style={styles.socialButton}
-                onPress={() => handleSocialLogin('Google')}
+                onPress={() => handleSocialLogin("Google")}
               >
                 <Text style={styles.socialButtonText}>Google</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.socialButton}
-                onPress={() => handleSocialLogin('Facebook')}
+                onPress={() => handleSocialLogin("Facebook")}
               >
                 <Text style={styles.socialButtonText}>Facebook</Text>
               </TouchableOpacity>
@@ -175,7 +180,7 @@ export default function LoginScreen() {
           {/* Sign Up Link */}
           <View style={styles.signupSection}>
             <Text style={styles.signupText}>Don't have an account? </Text>
-            <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+            <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
               <Text style={styles.signupLink}>Sign Up</Text>
             </TouchableOpacity>
           </View>
@@ -204,21 +209,21 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 24,
   },
   headerTitle: {
     fontSize: 32,
-    fontFamily: 'Playfair-Bold',
-    color: '#FFFFFF',
+    fontFamily: "Playfair-Bold",
+    color: "#FFFFFF",
     marginBottom: 8,
   },
   headerSubtitle: {
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: '#C0C0C0',
+    fontFamily: "Inter-Regular",
+    color: "#C0C0C0",
   },
   form: {
     marginBottom: 32,
@@ -227,12 +232,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: "rgba(255, 255, 255, 0.1)",
     paddingHorizontal: 16,
     height: 56,
   },
@@ -242,94 +247,95 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: '#FFFFFF',
+    fontFamily: "Inter-Regular",
+    color: "#FFFFFF",
   },
   passwordInput: {
     paddingRight: 40,
   },
   eyeButton: {
-    position: 'absolute',
+    position: "absolute",
     right: 16,
     padding: 4,
   },
   forgotPassword: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     marginBottom: 32,
   },
   forgotPasswordText: {
     fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: '#FFD700',
+    fontFamily: "Inter-Medium",
+    color: "#FFD700",
   },
   loginButton: {
     height: 56,
     borderRadius: 28,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   gradientButton: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   loginButtonText: {
     fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
-    color: '#000000',
+    fontFamily: "Inter-SemiBold",
+    color: "#000000",
   },
   socialSection: {
     marginBottom: 32,
   },
   divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 24,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   dividerText: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: '#C0C0C0',
+    fontFamily: "Inter-Regular",
+    color: "#C0C0C0",
     marginHorizontal: 16,
   },
   socialButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     gap: 12,
   },
   socialButton: {
     flex: 1,
     height: 48,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   socialButtonText: {
     fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: '#FFFFFF',
+    fontFamily: "Inter-Medium",
+    color: "#FFFFFF",
   },
   signupSection: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     paddingBottom: 40,
   },
   signupText: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: '#C0C0C0',
+    fontFamily: "Inter-Regular",
+    color: "#C0C0C0",
   },
   signupLink: {
     fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
-    color: '#FFD700',
+    fontFamily: "Inter-SemiBold",
+    color: "#FFD700",
   },
 });
+

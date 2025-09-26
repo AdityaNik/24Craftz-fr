@@ -10,8 +10,6 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { ArrowLeft, User, Building, Camera, Users } from "lucide-react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 
 type UserType = "talent" | "industry" | null;
 

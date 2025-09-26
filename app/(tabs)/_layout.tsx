@@ -4,7 +4,7 @@ import { User, FileText, PowerCircle, Workflow } from "lucide-react-native";
 type LoginUser = "client" | "talent";
 
 export default function TabLayout() {
-  const loginUser = "client" as LoginUser; // Change to "client" or "talent" to test
+  const loginUser = "talent" as LoginUser; // Change to "client" or "talent" to test
 
   return (
     <>
@@ -30,7 +30,6 @@ export default function TabLayout() {
               },
             }}
           >
-            {" "}
             <Tabs.Screen
               name="applications"
               options={{

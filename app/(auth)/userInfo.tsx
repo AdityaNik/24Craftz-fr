@@ -50,11 +50,12 @@ export default function UserInfo() {
   const [showStateModal, setShowStateModal] = useState(false);
   const [showCityModal, setShowCityModal] = useState(false);
   const [showGenderModal, setShowGenderModal] = useState(false);
-  const { fullName, phoneNumber, email, password, role } = useLocalSearchParams();
+  const { fullName, phoneNumber, email, password, role } =
+    useLocalSearchParams();
 
   const togglePreference = (pref: string) => {
     setPreferences((prev) =>
-      prev.includes(pref) ? prev.filter((p) => p !== pref) : [...prev, pref]
+      prev.includes(pref) ? prev.filter((p) => p !== pref) : [...prev, pref],
     );
   };
 
@@ -79,7 +80,7 @@ export default function UserInfo() {
       if (!token) {
         Alert.alert(
           "Error",
-          "Failed to create account. Please try again later."
+          "Failed to create account. Please try again later.",
         );
         return;
       }
@@ -89,7 +90,7 @@ export default function UserInfo() {
       console.error("Registration error:", error);
       Alert.alert(
         "Error",
-        "An error occurred while creating your account. Please try again later"
+        "An error occurred while creating your account. Please try again later",
       );
       setLoading(false);
     } finally {

@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  Switch,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,32 +13,21 @@ import {
   Settings,
   CreditCard as Edit,
   Camera,
-  Star,
   MapPin,
-  Phone,
-  Mail,
   Calendar,
-  Award,
-  Users,
-  Briefcase,
-  Heart,
   Share,
-  Bell,
-  Shield,
   CircleHelp as HelpCircle,
   LogOut,
   ChevronRight,
-  CirclePlay as PlayCircle,
-  Image as ImageIcon,
-  Video,
   Plus,
 } from "lucide-react-native";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import BottomSheetExperience from "../components/BottomSheetExperience";
+import BottomSheetExperience from "../../components/BottomSheetExperience";
 
-export const BACKEND_URL = "http://192.168.1.45:3000";
+export const BACKEND_URL =
+  "https://gesticulatively-entomogenous-micha.ngrok-free.dev";
 
 interface ProfileData {
   fullName: string;
@@ -53,57 +41,8 @@ interface ProfileData {
   gender?: string;
 }
 
-interface ProfileStat {
-  label: string;
-  value: string;
-  icon: React.ComponentType<any>;
-}
-
-interface MediaItem {
-  id: string;
-  type: "image" | "video";
-  url: string;
-  title: string;
-}
-
-const profileStats: ProfileStat[] = [
-  { label: "Applications", value: "24", icon: Briefcase },
-  { label: "Profile Views", value: "156", icon: Users },
-  { label: "Likes", value: "89", icon: Heart },
-  { label: "Reviews", value: "12", icon: Star },
-];
-
-const mediaPortfolio: MediaItem[] = [
-  {
-    id: "1",
-    type: "image",
-    url: "https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=300",
-    title: "Headshot 1",
-  },
-  {
-    id: "2",
-    type: "video",
-    url: "https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=300",
-    title: "Acting Demo Reel",
-  },
-  {
-    id: "3",
-    type: "image",
-    url: "https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=300",
-    title: "Headshot 2",
-  },
-  {
-    id: "4",
-    type: "image",
-    url: "https://images.pexels.com/photos/7991678/pexels-photo-7991678.jpeg?auto=compress&cs=tinysrgb&w=300",
-    title: "Portfolio Shot",
-  },
-];
-
 export default function ProfileScreen() {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [profilePrivate, setProfilePrivate] = useState(false);
   const router = useRouter();
 
   const bottomSheetRef = useRef<any>(null);
@@ -145,35 +84,7 @@ export default function ProfileScreen() {
   const handleCloseExperienceSheet = () => {
     console.log("Experience sheet closed");
   };
-
-  const renderStatCard = (stat: ProfileStat, index: number) => {
-    const IconComponent = stat.icon;
-    return (
-      <View key={index} style={styles.statCard}>
-        <IconComponent color="#FFD700" size={18} />
-        <Text style={styles.statValue}>{stat.value}</Text>
-        <Text style={styles.statLabel}>{stat.label}</Text>
-      </View>
-    );
-  };
-
-  const renderMediaItem = (item: MediaItem) => (
-    <TouchableOpacity key={item.id} style={styles.mediaItem}>
-      <Image source={{ uri: item.url }} style={styles.mediaImage} />
-      <View style={styles.mediaOverlay}>
-        {item.type === "video" ? (
-          <PlayCircle color="#FFFFFF" size={24} />
-        ) : (
-          <ImageIcon color="#FFFFFF" size={24} />
-        )}
-      </View>
-      <Text style={styles.mediaTitle}>{item.title}</Text>
-    </TouchableOpacity>
-  );
-
   const settingsOptions = [
-    // { icon: Bell, label: 'Notifications', hasSwitch: true, value: notificationsEnabled, onToggle: setNotificationsEnabled },
-    // { icon: Shield, label: 'Privacy', hasSwitch: true, value: profilePrivate, onToggle: setProfilePrivate },
     { icon: HelpCircle, label: "Help & Support", hasArrow: true },
     { icon: Share, label: "Share Profile", hasArrow: true },
     {
@@ -235,36 +146,27 @@ export default function ProfileScreen() {
               </View>
             </View>
 
-            <TouchableOpacity style={styles.editButton}>
-              <Edit color="#000000" size={16} />
-              <Text style={styles.editButtonText}>Edit Profile</Text>
-            </TouchableOpacity>
-          </View>
+            <View
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                flexDirection: "row",
+                gap: 8,
+              }}
+            >
+              <TouchableOpacity style={styles.editButton}>
+                <Edit color="#000000" size={16} />
+                <Text style={styles.editButtonText}>Edit Profile</Text>
+              </TouchableOpacity>
 
-          {/* Stats Section */}
-          {/* <View style={styles.statsSection}>
-            <Text style={styles.sectionTitle}>Profile Stats</Text>
-            <View style={styles.statsGrid}>
-              {profileStats.map(renderStatCard)}
-            </View>
-          </View> */}
-
-          {/* Portfolio Section */}
-          {/* <View style={styles.portfolioSection}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Media Portfolio</Text>
-              <TouchableOpacity>
-                <Text style={styles.viewAllText}>View All</Text>
+              <TouchableOpacity style={styles.editButton}>
+                <Edit color="#000000" size={16} />
+                <Link href="/profile/appliedJobs" style={styles.editButtonText}>
+                  Applied Jobs
+                </Link>
               </TouchableOpacity>
             </View>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.mediaGrid}
-            >
-              {mediaPortfolio.map(renderMediaItem)}
-            </ScrollView>
-          </View> */}
+          </View>
 
           {/* Experience Section */}
           <View style={styles.experienceSection}>
